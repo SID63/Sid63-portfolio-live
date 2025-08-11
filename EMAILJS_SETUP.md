@@ -39,9 +39,9 @@ This guide will help you set up EmailJS to make your contact form functional.
 
 ```typescript
 export const emailjsConfig = {
-  serviceId: 'your_actual_service_id', // From Step 2
-  templateId: 'your_actual_template_id', // From Step 3
-  publicKey: 'your_actual_public_key', // From Step 4
+  serviceId: 'service_gmlyl9t', // From Step 2
+  templateId: 'template_8giip5m', // From Step 3
+  publicKey: 'Cppc8wKnsVxzUagFi', // From Step 4
 };
 ```
 
