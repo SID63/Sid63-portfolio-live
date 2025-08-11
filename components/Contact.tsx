@@ -42,12 +42,6 @@ export function Contact() {
       link: "tel:+919962581028"
     },
     {
-      icon: <Globe className="h-6 w-6 text-primary" />,
-      title: "Portfolio",
-      value: "sidarth-murali.pages.dev",
-      link: "https://sidarth-murali.pages.dev/"
-    },
-    {
       icon: <Linkedin className="h-6 w-6 text-primary" />,
       title: "LinkedIn",
       value: "linkedin.com/in/sidarthmurali-63",
