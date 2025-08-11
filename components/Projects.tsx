@@ -16,6 +16,8 @@ export function Projects() {
       technologies: ["IoT", "Hyperledger", "CouchDB", "Supabase", "GSM", "Python"],
       period: "June 2024 - June 2025",
       organization: "Amrita vishwa vidyapeetham",
+      projectUrl: "https://github.com/yourusername/coldblox-project",
+      sourceCodeUrl: "https://github.com/SID63/ColdBlox",
       details: [
         "Collaborated with 4 peers under faculty mentorship to build a research-driven cold chain monitoring system",
         "Deployed 2 remote slave nodes and 1 master node to simulate real-world logistics",
@@ -31,6 +33,8 @@ export function Projects() {
       technologies: ["OpenCV", "MobileNet SSD", "MQTT", "HiveMQ", "Gyroscope", "Python"],
       period: "January 2024 - June 2024",
       organization: "Amrita vishwa vidyapeetham",
+      projectUrl: "https://github.com/yourusername/bus-detection-project",
+      sourceCodeUrl: "https://github.com/SID63/ppl-count",
       details: [
         "Collaborated with 4 peers under faculty guidance as part of a department-wide Open Lab innovation initiative",
         "Achieved over 90% accuracy in real-time passenger counting using MobileNet SSD and Centroid Tracker",
@@ -46,6 +50,8 @@ export function Projects() {
       technologies: ["discord.py", "YouTube API", "Weather API", "Reddit API", "Python"],
       period: "January 2020 - May 2020",
       organization: "Passion Project",
+      projectUrl: "https://top.gg/bot/766196780295389204",
+      sourceCodeUrl: "https://github.com/gojiraa-bot/my-first-discord.py-bot",
       details: [
         "Created a multifunctional chatbot to automate entertainment and utilities for a community of 1,000+ users",
         "Posted trending memes from Reddit, increasing engagement",
@@ -115,7 +121,12 @@ export function Projects() {
                           whileHover={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.1 }}
                         >
-                          <Button size="sm" variant="secondary" className="gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="secondary" 
+                            className="gap-2"
+                            onClick={() => window.open(project.projectUrl, '_blank')}
+                          >
                             <ExternalLink className="h-4 w-4" />
                             View Details
                           </Button>
@@ -193,13 +204,22 @@ export function Projects() {
                       {/* Action Buttons */}
                       <div className="flex gap-3">
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                          <Button size="sm" className="gap-2">
+                          <Button 
+                            size="sm" 
+                            className="gap-2"
+                            onClick={() => window.open(project.projectUrl, '_blank')}
+                          >
                             <ExternalLink className="h-4 w-4" />
                             View Project
                           </Button>
                         </motion.div>
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                          <Button size="sm" variant="outline" className="gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="gap-2"
+                            onClick={() => window.open(project.sourceCodeUrl, '_blank')}
+                          >
                             <Github className="h-4 w-4" />
                             Source Code
                           </Button>
