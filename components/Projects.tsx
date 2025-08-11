@@ -6,6 +6,7 @@ import { ExternalLink, Github } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { RevealOnScroll } from './RevealOnScroll';
 import { StaggerContainer, StaggerItem } from './StaggerContainer';
+import { AspectRatio } from './ui/aspect-ratio';
 
 // Local project images
 import coldBloxImg from './projects images/ColdBlox Logo Design.png';
@@ -108,11 +109,13 @@ export function Projects() {
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
                       >
-                        <ImageWithFallback
-                          src={project.image}
-                          alt={project.title}
-                          className="w-full h-64 object-cover"
-                        />
+                        <AspectRatio ratio={16/9}>
+                          <ImageWithFallback
+                            src={project.image}
+                            alt={project.title}
+                            className="w-full h-full object-cover object-center"
+                          />
+                        </AspectRatio>
                       </motion.div>
                       
                       {/* Overlay with buttons */}
