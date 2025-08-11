@@ -33,10 +33,20 @@ export function Contact() {
     setErrorMessage('');
 
     try {
+      // Quick guard against obviously invalid configuration
+      const looksInvalid =
+        !emailjsConfig?.serviceId?.startsWith('service_') ||
+        !emailjsConfig?.templateId?.startsWith('template_') ||
+        !emailjsConfig?.publicKey;
+      if (looksInvalid) {
+        throw new Error('Email configuration is invalid. Please verify Service ID, Template ID, and Public Key.');
+      }
+
       // EmailJS configuration - you'll need to set these up
       const templateParams = {
         from_name: formData.name,
         from_email: formData.email,
+        reply_to: formData.email, // helps most default templates
         subject: formData.subject,
         message: formData.message,
         to_name: 'Sidarth',
@@ -65,10 +75,15 @@ export function Contact() {
       } else {
         throw new Error('Failed to send message');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('EmailJS error:', error);
+      if (error?.text) console.error('EmailJS error text:', error.text);
       setSubmitStatus('error');
-      setErrorMessage('Failed to send message. Please try again or contact me directly via email.');
+      setErrorMessage(
+        error?.text ||
+          error?.message ||
+          'Failed to send message. Please try again or contact me directly via email.'
+      );
       // Reset status after 5 seconds
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } finally {
