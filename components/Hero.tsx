@@ -55,24 +55,26 @@ export function Hero() {
         />
 
         {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
+        {[...Array(25)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-white/20 rounded-full"
+            className="absolute bg-white/40 rounded-full"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
+              width: `${1 + Math.random() * 2}px`,
+              height: `${1 + Math.random() * 2}px`,
             }}
             animate={{
-              y: [0, -20, 0],
-              opacity: [0.2, 0.8, 0.2],
-              scale: [0.5, 1, 0.5],
+              y: [0, -30, 0],
+              opacity: [0.3, 0.9, 0.3],
+              scale: [0.6, 1.2, 0.6],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 4 + Math.random() * 3,
               repeat: Infinity,
               ease: "easeInOut",
-              delay: Math.random() * 2,
+              delay: Math.random() * 3,
             }}
           />
         ))}
@@ -93,6 +95,31 @@ export function Hero() {
             backgroundSize: "50px 50px"
           }}
         />
+
+        {/* Larger floating dots for better visibility */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`large-${i}`}
+            className="absolute bg-white/30 rounded-full"
+            style={{
+              top: `${20 + Math.random() * 60}%`,
+              left: `${20 + Math.random() * 60}%`,
+              width: `${3 + Math.random() * 4}px`,
+              height: `${3 + Math.random() * 4}px`,
+            }}
+            animate={{
+              y: [0, -40, 0],
+              opacity: [0.2, 0.7, 0.2],
+              scale: [0.8, 1.4, 0.8],
+            }}
+            transition={{
+              duration: 6 + Math.random() * 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 4,
+            }}
+          />
+        ))}
       </div>
       
       <div className="container mx-auto px-6 relative z-10">

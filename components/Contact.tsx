@@ -19,6 +19,17 @@ export function Contact() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{
+    name: boolean;
+    email: boolean;
+    subject: boolean;
+    message: boolean;
+  }>({
+    name: false,
+    email: false,
+    subject: false,
+    message: false
+  });
 
   // AI writing state
   const [purpose, setPurpose] = useState('');
@@ -142,8 +153,46 @@ export function Contact() {
     console.log('📧 EmailJS library loaded:', typeof emailjs !== 'undefined');
   }, []);
 
+  const validateForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isEmailValid = emailRegex.test(formData.email);
+    
+    const errors = {
+      name: !formData.name.trim(),
+      email: !formData.email.trim() || !isEmailValid,
+      subject: !formData.subject.trim(),
+      message: !formData.message.trim()
+    };
+    
+    console.log('🔍 Validation errors:', errors);
+    console.log('📝 Form data:', formData);
+    console.log('📧 Email validation:', {
+      email: formData.email,
+      trimmed: formData.email.trim(),
+      hasAtSymbol: formData.email.includes('@'),
+      hasDot: formData.email.includes('.'),
+      regexTest: isEmailValid,
+      emailError: errors.email
+    });
+    
+    setValidationErrors(errors);
+    const isValid = !Object.values(errors).some(error => error);
+    console.log('✅ Form is valid:', isValid);
+    
+    return isValid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚀 Form submission attempted');
+    
+    if (!validateForm()) {
+      console.log('❌ Validation failed, stopping submission');
+      return; // Stop submission if validation fails
+    }
+    
+    console.log('✅ Validation passed, proceeding with submission');
+    
     setIsLoading(true);
     setSubmitStatus('idle');
     setErrorMessage('');
@@ -208,6 +257,27 @@ export function Contact() {
       ...formData,
       [e.target.name]: e.target.value
     });
+    
+    // Clear validation error for this field when user starts typing
+    if (validationErrors[e.target.name as keyof typeof validationErrors]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [e.target.name]: false
+      }));
+    }
+    
+    // Real-time email validation
+    if (e.target.name === 'email' && e.target.value.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const isEmailValid = emailRegex.test(e.target.value);
+      
+      if (!isEmailValid) {
+        setValidationErrors(prev => ({
+          ...prev,
+          email: true
+        }));
+      }
+    }
   };
 
   const handleGenerate = async () => {
@@ -403,7 +473,13 @@ export function Contact() {
                     <option value="concise">Concise</option>
                     <option value="detailed">Detailed</option>
                   </select>
-                  <Button type="button" variant="outline" size="sm" className="gap-2" onClick={handleGenerate} disabled={isGenerating || !purpose.trim()}>
+                  <Button 
+                    type="button" 
+                    size="sm" 
+                    className="gap-2 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 hover:from-purple-600 hover:via-pink-600 hover:to-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300" 
+                    onClick={handleGenerate} 
+                    disabled={isGenerating || !purpose.trim()}
+                  >
                     <Wand2 className="h-4 w-4" />
                     {isGenerating ? 'Generating...' : 'Generate with AI'}
                   </Button>
@@ -411,6 +487,7 @@ export function Contact() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium">Name</label>
@@ -422,7 +499,11 @@ export function Contact() {
                       required
                       disabled={isLoading}
                       placeholder="Your name"
-                      className="placeholder:text-gray-600"
+                      className={`placeholder:text-gray-600 transition-all duration-300 ${
+                        validationErrors.name 
+                          ? 'ring-2 ring-red-500 shadow-lg shadow-red-500/25' 
+                          : 'ring-1 ring-border'
+                      }`}
                     />
                   </div>
                   <div className="space-y-2">
@@ -436,8 +517,17 @@ export function Contact() {
                       required
                       disabled={isLoading}
                       placeholder="your.email@example.com"
-                      className="placeholder:text-gray-600"
+                      className={`placeholder:text-gray-600 transition-all duration-300 ${
+                        validationErrors.email 
+                          ? 'ring-2 ring-red-500 shadow-lg shadow-red-500/25' 
+                          : 'ring-1 ring-border'
+                      }`}
                     />
+                    {validationErrors.email && formData.email.trim() && (
+                      <p className="text-sm text-red-500 mt-1">
+                        Please enter a valid email address (e.g., user@example.com)
+                      </p>
+                    )}
                   </div>
                 </div>
                 
@@ -451,7 +541,13 @@ export function Contact() {
                     required
                     disabled={isLoading}
                     placeholder="What's this about?"
-                    className="placeholder:text-gray-600"
+                    className={`placeholder:text-gray-600 transition-all duration-300 ${
+                      validationErrors.subject 
+                        ? 'ring-2 ring-red-500 shadow-lg shadow-red-500/25'
+                        : formData.subject && formData.subject !== purpose 
+                          ? 'ring-2 ring-purple-500 shadow-lg shadow-purple-500/25' 
+                          : 'ring-1 ring-border'
+                    }`}
                   />
                 </div>
                 
@@ -466,14 +562,30 @@ export function Contact() {
                     required
                     disabled={isLoading}
                     placeholder="Tell me about your project or question..."
-                    className="placeholder:text-gray-600"
+                    className={`placeholder:text-gray-600 transition-all duration-300 ${
+                      validationErrors.message 
+                        ? 'ring-2 ring-red-500 shadow-lg shadow-red-500/25'
+                        : formData.message && formData.message !== purpose 
+                          ? 'ring-2 ring-purple-500 shadow-lg shadow-purple-500/25' 
+                          : 'ring-1 ring-border'
+                    }`}
                   />
                 </div>
                 
                 <Button 
                   type="submit" 
-                  className="w-full gap-2" 
+                  className={`w-full gap-2 transition-all duration-300 ${
+                    formData.name && formData.email && formData.subject && formData.message
+                      ? 'bg-gradient-to-r from-primary to-accent text-green-500 hover:opacity-90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30'
+                      : 'bg-muted text-muted-foreground cursor-not-allowed'
+                  }`}
                   disabled={isLoading}
+                  onClick={(e) => {
+                    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+                      e.preventDefault();
+                      validateForm();
+                    }
+                  }}
                 >
                   {isLoading ? (
                     <>
