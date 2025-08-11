@@ -3,7 +3,9 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Mail, Phone, MapPin, Send, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Linkedin, CheckCircle, AlertCircle } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import { emailjsConfig } from '../src/config/emailjs';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -12,13 +14,52 @@ export function Contact() {
     subject: '',
     message: ''
   });
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    // Reset form
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setIsLoading(true);
+    setSubmitStatus('idle');
+    setErrorMessage('');
+
+    try {
+      // EmailJS configuration - you'll need to set these up
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        to_name: 'Sidarth',
+      };
+
+      // Use EmailJS configuration
+      const result = await emailjs.send(
+        emailjsConfig.serviceId,
+        emailjsConfig.templateId,
+        templateParams,
+        emailjsConfig.publicKey
+      );
+
+      if (result.status === 200) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        // Reset status after 5 seconds
+        setTimeout(() => setSubmitStatus('idle'), 5000);
+      } else {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      console.error('EmailJS error:', error);
+      setSubmitStatus('error');
+      setErrorMessage('Failed to send message. Please try again or contact me directly via email.');
+      // Reset status after 5 seconds
+      setTimeout(() => setSubmitStatus('idle'), 5000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -105,20 +146,38 @@ export function Contact() {
               <CardTitle className="text-xl">Send a Message</CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
+              {/* Success Message */}
+              {submitStatus === 'success' && (
+                <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700">
+                  <CheckCircle className="h-5 w-5" />
+                  <span>Message sent successfully! I'll get back to you soon.</span>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {submitStatus === 'error' && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700">
+                  <AlertCircle className="h-5 w-5" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm">Name</label>
+                    <label htmlFor="name" className="text-sm font-medium">Name</label>
                     <Input
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       required
+                      disabled={isLoading}
+                      placeholder="Your name"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm">Email</label>
+                    <label htmlFor="email" className="text-sm font-medium">Email</label>
                     <Input
                       id="email"
                       name="email"
@@ -126,23 +185,27 @@ export function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                       required
+                      disabled={isLoading}
+                      placeholder="your.email@example.com"
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="subject" className="text-sm">Subject</label>
+                  <label htmlFor="subject" className="text-sm font-medium">Subject</label>
                   <Input
                     id="subject"
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
                     required
+                    disabled={isLoading}
+                    placeholder="What's this about?"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm">Message</label>
+                  <label htmlFor="message" className="text-sm font-medium">Message</label>
                   <Textarea
                     id="message"
                     name="message"
@@ -150,12 +213,27 @@ export function Contact() {
                     value={formData.message}
                     onChange={handleChange}
                     required
+                    disabled={isLoading}
+                    placeholder="Tell me about your project or question..."
                   />
                 </div>
                 
-                <Button type="submit" className="w-full gap-2">
-                  <Send className="h-4 w-4" />
-                  Send Message
+                <Button 
+                  type="submit" 
+                  className="w-full gap-2" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Send Message
+                    </>
+                  )}
                 </Button>
               </form>
             </CardContent>
