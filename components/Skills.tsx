@@ -23,7 +23,7 @@ export function Skills() {
     },
     {
       title: "IoT & Hardware",
-      skills: ["IoT", "MQTT", "OPC-UA", "Sensor Integration"],
+      skills: ["IoT", "MQTT","Sensor Integration", "Arduino", "Raspberry Pi"],
       color: "from-purple-500/20 to-pink-500/20"
     },
     {

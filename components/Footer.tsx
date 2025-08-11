@@ -32,7 +32,7 @@ export function Footer() {
 
         <div className="mt-8 pt-8 border-t border-border text-center">
           <p className="text-muted-foreground flex items-center justify-center gap-2">
-            © {currentYear} Sidarth Murali. Made with <Heart className="h-4 w-4 text-red-500 fill-red-500" /> and lots of coffee.
+            © {currentYear} Sidarth Murali. Made with <Heart className="h-4 w-4 text-red-500 fill-red-500" /> 
           </p>
         </div>
       </div>
