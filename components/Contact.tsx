@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
@@ -19,6 +19,13 @@ export function Contact() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Debug: Check EmailJS initialization
+  useEffect(() => {
+    console.log('🔧 Contact component mounted');
+    console.log('📧 EmailJS config:', emailjsConfig);
+    console.log('📧 EmailJS library loaded:', typeof emailjs !== 'undefined');
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -35,6 +42,11 @@ export function Contact() {
         to_name: 'Sidarth',
       };
 
+      // Debug logging
+      console.log('🚀 Attempting to send email...');
+      console.log('📧 Template params:', templateParams);
+      console.log('⚙️ EmailJS config:', emailjsConfig);
+
       // Use EmailJS configuration
       const result = await emailjs.send(
         emailjsConfig.serviceId,
@@ -42,6 +54,8 @@ export function Contact() {
         templateParams,
         emailjsConfig.publicKey
       );
+
+      console.log('✅ EmailJS result:', result);
 
       if (result.status === 200) {
         setSubmitStatus('success');
