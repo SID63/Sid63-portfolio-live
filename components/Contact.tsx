@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Mail, Phone, MapPin, Send, Globe, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Linkedin } from 'lucide-react';
 
 export function Contact() {
   const [formData, setFormData] = useState({
