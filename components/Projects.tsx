@@ -12,6 +12,7 @@ import { AspectRatio } from './ui/aspect-ratio';
 import coldBloxImg from './projects images/ColdBlox Logo Design.png';
 import busOverloadImg from './projects images/bus overload prevention.png';
 import discordBotImg from './projects images/gojiraa discord bot.png';
+import gestureVolImg from './projects images/gesture volume control.png';
 
 export function Projects() {
   const projects = [
@@ -64,6 +65,21 @@ export function Projects() {
         "Provided real-time weather updates using the Weather API",
         "Shared random dad jokes and fun content to boost interaction and user retention",
         "Integrated YouTube API for music playback in voice channels, supporting queueing, looping, and volume control"
+      ]
+    },
+    {
+      title: "Gesture Volume Control",
+      description: "Python-based hand gesture recognition app that controls system volume via webcam using MediaPipe and OpenCV.",
+      image: gestureVolImg,
+      technologies: ["Python", "OpenCV", "MediaPipe", "NumPy", "pycaw", "Windows"],
+      period: "may 2020 – may 2020",
+      organization: "Passion Project",
+      projectUrl: "https://github.com/yourusername/gesture-vol-control",
+      sourceCodeUrl: "https://github.com/SID63/gesture-vol-control",
+      details: [
+        "Real-time hand tracking with 21-point landmarks and gesture state detection",
+        "Thumb–index pinch maps to smooth volume changes with interpolation",
+        "Visual feedback overlay with volume bar, percentage, and FPS at 30+ FPS"
       ]
     }
   ];
