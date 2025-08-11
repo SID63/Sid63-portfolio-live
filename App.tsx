@@ -15,6 +15,7 @@ export default function App() {
       <CursorEffects />
       <Header />
       <main>
+        <Analytics />
         <Hero />
         <About />
         <Skills />
