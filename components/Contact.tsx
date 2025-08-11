@@ -25,6 +25,116 @@ export function Contact() {
   const [tone, setTone] = useState<EmailTone>('professional');
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // Animated placeholder state
+  const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = useState(0);
+  const [currentPlaceholderText, setCurrentPlaceholderText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+
+  const placeholderExamples = [
+    "I want to collaborate on an IoT dashboard project for smart city monitoring...",
+    "Looking for a developer to help build a gesture-controlled volume system...",
+    "Interested in discussing potential internship opportunities at your company...",
+    "Need assistance with a React-based portfolio website redesign...",
+    "Would like to explore freelance opportunities for web development projects..."
+  ];
+
+  // Animated typing effect for placeholder
+  useEffect(() => {
+    let timeoutIds: NodeJS.Timeout[] = [];
+    
+    const clearAllTimeouts = () => {
+      timeoutIds.forEach(id => clearTimeout(id));
+      timeoutIds = [];
+    };
+
+    const typeText = (text: string, index: number) => {
+      if (purpose.trim()) return;
+      
+      setIsTyping(true);
+      let currentText = '';
+      let charIndex = 0;
+      
+      const typeNextChar = () => {
+        if (purpose.trim() || charIndex >= text.length) {
+          if (charIndex >= text.length) {
+            // Finished typing, wait then delete
+            const waitId = setTimeout(() => deleteText(text, index), 2000);
+            timeoutIds.push(waitId);
+          } else {
+            setIsTyping(false);
+            setCurrentPlaceholderText('');
+          }
+          return;
+        }
+        
+        currentText += text[charIndex];
+        setCurrentPlaceholderText(currentText);
+        charIndex++;
+        
+        const nextId = setTimeout(typeNextChar, 50);
+        timeoutIds.push(nextId);
+      };
+      
+      typeNextChar();
+    };
+
+    const deleteText = (text: string, index: number) => {
+      if (purpose.trim()) {
+        setIsTyping(false);
+        setCurrentPlaceholderText('');
+        return;
+      }
+      
+      let currentText = text;
+      let charIndex = text.length;
+      
+      const deleteNextChar = () => {
+        if (purpose.trim() || charIndex <= 0) {
+          setIsTyping(false);
+          setCurrentPlaceholderText('');
+          
+          if (!purpose.trim()) {
+            // Move to next example
+            const nextIndex = (index + 1) % placeholderExamples.length;
+            setCurrentPlaceholderIndex(nextIndex);
+            
+            const waitId = setTimeout(() => {
+              if (!purpose.trim()) {
+                typeText(placeholderExamples[nextIndex], nextIndex);
+              }
+            }, 1000);
+            timeoutIds.push(waitId);
+          }
+          return;
+        }
+        
+        currentText = text.slice(0, charIndex);
+        setCurrentPlaceholderText(currentText);
+        charIndex--;
+        
+        const nextId = setTimeout(deleteNextChar, 30);
+        timeoutIds.push(nextId);
+      };
+      
+      deleteNextChar();
+    };
+
+    // Start animation only if field is empty
+    if (!purpose.trim()) {
+      typeText(placeholderExamples[currentPlaceholderIndex], currentPlaceholderIndex);
+    }
+
+    return clearAllTimeouts;
+  }, [purpose, currentPlaceholderIndex]);
+
+  // Clear placeholder text when user starts typing
+  useEffect(() => {
+    if (purpose.trim()) {
+      setCurrentPlaceholderText('');
+      setIsTyping(false);
+    }
+  }, [purpose]);
+
   // Debug: Check EmailJS initialization
   useEffect(() => {
     console.log('🔧 Contact component mounted');
@@ -228,15 +338,58 @@ export function Contact() {
               {/* AI Assist */}
               <div className="space-y-2">
                 <label htmlFor="purpose" className="text-sm font-medium">Describe the purpose (AI can draft for you)</label>
-                <Textarea
-                  id="purpose"
-                  name="purpose"
-                  rows={3}
-                  value={purpose}
-                  onChange={(e) => setPurpose(e.target.value)}
-                  placeholder="E.g., I want to inquire about collaborating on an IoT dashboard project next month..."
-                  disabled={isLoading || isGenerating}
-                />
+                <div className="relative">
+                  <Textarea
+                    id="purpose"
+                    name="purpose"
+                    rows={3}
+                    value={purpose}
+                    onChange={(e) => setPurpose(e.target.value)}
+                    placeholder=""
+                    disabled={isLoading || isGenerating}
+                    className="relative z-10 text-[14px] leading-[1.5] pl-4 pt-3"
+                  />
+                  {/* Animated placeholder text */}
+                  {isTyping && currentPlaceholderText && (
+                    <div 
+                      className="absolute top-0 left-0 pointer-events-none text-gray-600"
+                      style={{
+                        top: '12px',
+                        left: '16px',
+                        fontSize: '14px',
+                        fontFamily: 'inherit',
+                        lineHeight: '1.5',
+                        whiteSpace: 'pre-wrap',
+                        wordWrap: 'break-word',
+                        maxWidth: 'calc(100% - 32px)',
+                        zIndex: 5
+                      }}
+                    >
+                      {currentPlaceholderText}
+                      <span className="ml-1 animate-pulse">▋</span>
+                    </div>
+                  )}
+                  
+                  {/* Static placeholder when no animation is active */}
+                  {!isTyping && !currentPlaceholderText && !purpose && (
+                    <div 
+                      className="absolute top-0 left-0 pointer-events-none text-gray-700"
+                      style={{
+                        top: '12px',
+                        left: '16px',
+                        fontSize: '14px',
+                        fontFamily: 'inherit',
+                        lineHeight: '1.5',
+                        whiteSpace: 'pre-wrap',
+                        wordWrap: 'break-word',
+                        maxWidth: 'calc(100% - 32px)',
+                        zIndex: 5
+                      }}
+                    >
+                      {placeholderExamples[currentPlaceholderIndex]}
+                    </div>
+                  )}
+                </div>
                 <div className="flex items-center gap-3">
                   <select
                     className="bg-input-background border border-input rounded-md px-2 py-1 text-sm"
@@ -269,6 +422,7 @@ export function Contact() {
                       required
                       disabled={isLoading}
                       placeholder="Your name"
+                      className="placeholder:text-gray-600"
                     />
                   </div>
                   <div className="space-y-2">
@@ -282,6 +436,7 @@ export function Contact() {
                       required
                       disabled={isLoading}
                       placeholder="your.email@example.com"
+                      className="placeholder:text-gray-600"
                     />
                   </div>
                 </div>
@@ -296,6 +451,7 @@ export function Contact() {
                     required
                     disabled={isLoading}
                     placeholder="What's this about?"
+                    className="placeholder:text-gray-600"
                   />
                 </div>
                 
@@ -310,6 +466,7 @@ export function Contact() {
                     required
                     disabled={isLoading}
                     placeholder="Tell me about your project or question..."
+                    className="placeholder:text-gray-600"
                   />
                 </div>
                 
