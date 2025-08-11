@@ -6,7 +6,7 @@ type AspectRatioProps = {
   children: React.ReactNode;
 };
 
-// Minimal aspect-ratio wrapper that preserves child sizing using absolute fill
+// Minimal aspect-ratio wrapper using CSS aspect-ratio for stable layout
 function AspectRatio({ ratio = 1, className, children }: AspectRatioProps) {
   return (
     <div

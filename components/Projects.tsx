@@ -109,11 +109,14 @@ export function Projects() {
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
                       >
-                        <AspectRatio ratio={16/9}>
+                        <AspectRatio ratio={16/9} className="rounded-lg overflow-hidden bg-muted/20">
                           <ImageWithFallback
                             src={project.image}
                             alt={project.title}
-                            className="w-full h-full object-cover object-center"
+                            className="w-full h-full object-cover object-center block select-none"
+                            loading="lazy"
+                            decoding="async"
+                            draggable={false}
                           />
                         </AspectRatio>
                       </motion.div>
