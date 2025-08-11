@@ -5,15 +5,12 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "routes": [
+    { "src": "/favicon\\.svg", "dest": "/favicon.svg" },
+    { "src": "/manifest\\.json", "dest": "/manifest.json" },
     {
       "src": "/assets/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+      "headers": { "cache-control": "public, max-age=31536000, immutable" }
     },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
