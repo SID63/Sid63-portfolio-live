@@ -106,14 +106,14 @@ export function Projects() {
                     {/* Project Image */}
                     <div className="relative overflow-hidden">
                       <motion.div
-                        whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.02 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
                       >
                         <AspectRatio ratio={16/9} className="rounded-lg overflow-hidden bg-muted/20">
                           <ImageWithFallback
                             src={project.image}
                             alt={project.title}
-                            className="w-full h-full object-cover object-center block select-none"
+                            className="w-full h-full object-contain object-center block select-none bg-background"
                             loading="lazy"
                             decoding="async"
                             draggable={false}
