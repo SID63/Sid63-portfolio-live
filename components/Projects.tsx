@@ -7,12 +7,17 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { RevealOnScroll } from './RevealOnScroll';
 import { StaggerContainer, StaggerItem } from './StaggerContainer';
 
+// Local project images
+import coldBloxImg from './projects images/ColdBlox Logo Design.png';
+import busOverloadImg from './projects images/bus overload prevention.png';
+import discordBotImg from './projects images/gojiraa discord bot.png';
+
 export function Projects() {
   const projects = [
     {
       title: "ColdBlox - Cold Chain Monitoring System",
       description: "A research-driven cold chain monitoring system with IoT sensors, blockchain integration, and real-time dashboard for logistics tracking.",
-      image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&h=300&fit=crop",
+      image: coldBloxImg,
       technologies: ["IoT", "Hyperledger", "CouchDB", "Supabase", "GSM", "Python"],
       period: "June 2024 - June 2025",
       organization: "Amrita vishwa vidyapeetham",
@@ -29,7 +34,7 @@ export function Projects() {
     {
       title: "Bus Overload and Rash Driving Detection",
       description: "Real-time passenger counting and rash driving detection system using computer vision and IoT sensors.",
-      image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500&h=300&fit=crop",
+      image: busOverloadImg,
       technologies: ["OpenCV", "MobileNet SSD", "MQTT", "HiveMQ", "Gyroscope", "Python"],
       period: "January 2024 - June 2024",
       organization: "Amrita vishwa vidyapeetham",
@@ -46,7 +51,7 @@ export function Projects() {
     {
       title: "Discord Chat Bot",
       description: "A multifunctional chatbot for entertainment and utilities serving a community of 1,000+ users.",
-      image: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=500&h=300&fit=crop",
+      image: discordBotImg,
       technologies: ["discord.py", "YouTube API", "Weather API", "Reddit API", "Python"],
       period: "January 2020 - May 2020",
       organization: "Passion Project",
