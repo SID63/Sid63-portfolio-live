@@ -56,6 +56,13 @@
   --animation-duration: 0.3s;
   --animation-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --glow-intensity: 0.6;
+
+  /* Scrollbar variables */
+  --scrollbar-size: 10px;
+  --scrollbar-track: color-mix(in oklch, var(--muted) 85%, transparent);
+  --scrollbar-thumb: color-mix(in oklch, var(--primary) 80%, var(--accent) 20%);
+  --scrollbar-thumb-hover: color-mix(in oklch, var(--primary) 60%, var(--accent) 40%);
+  --scrollbar-thumb-active: color-mix(in oklch, var(--primary) 45%, var(--accent) 55%);
 }
 
 @theme inline {
@@ -136,25 +143,50 @@
     }
   }
 
-  /* Enhanced scrollbar styling */
+  /* Improved cross-browser scrollbar styling */
+  html { 
+    scrollbar-gutter: stable both-edges; 
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  /* WebKit-based browsers */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--muted);
-    border-radius: 4px;
+    background: var(--scrollbar-track);
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--primary);
-    border-radius: 4px;
-    transition: background-color var(--animation-duration) var(--animation-ease);
+    background: linear-gradient(180deg, var(--scrollbar-thumb), var(--scrollbar-thumb-hover));
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    transition: background-color var(--animation-duration) var(--animation-ease), box-shadow var(--animation-duration) var(--animation-ease);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+    background: linear-gradient(180deg, var(--scrollbar-thumb-hover), var(--scrollbar-thumb-active));
+    box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: var(--scrollbar-thumb-active);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.6) inset;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
   }
 
   /* Selection styling */
