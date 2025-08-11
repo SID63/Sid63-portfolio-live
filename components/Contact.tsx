@@ -3,9 +3,10 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Mail, Phone, MapPin, Send, Linkedin, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Linkedin, CheckCircle, AlertCircle, Wand2 } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 import { emailjsConfig } from '../src/config/emailjs';
+import { generateEmailFromPurpose, type EmailTone } from '../src/config/gemini';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,11 @@ export function Contact() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // AI writing state
+  const [purpose, setPurpose] = useState('');
+  const [tone, setTone] = useState<EmailTone>('professional');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Debug: Check EmailJS initialization
   useEffect(() => {
@@ -33,7 +39,6 @@ export function Contact() {
     setErrorMessage('');
 
     try {
-      // Quick guard against obviously invalid configuration
       const looksInvalid =
         !emailjsConfig?.serviceId?.startsWith('service_') ||
         !emailjsConfig?.templateId?.startsWith('template_') ||
@@ -42,22 +47,19 @@ export function Contact() {
         throw new Error('Email configuration is invalid. Please verify Service ID, Template ID, and Public Key.');
       }
 
-      // EmailJS configuration - you'll need to set these up
       const templateParams = {
         from_name: formData.name,
         from_email: formData.email,
-        reply_to: formData.email, // helps most default templates
+        reply_to: formData.email,
         subject: formData.subject,
         message: formData.message,
         to_name: 'Sidarth',
       };
 
-      // Debug logging
       console.log('🚀 Attempting to send email...');
       console.log('📧 Template params:', templateParams);
       console.log('⚙️ EmailJS config:', emailjsConfig);
 
-      // Use EmailJS configuration
       const result = await emailjs.send(
         emailjsConfig.serviceId,
         emailjsConfig.templateId,
@@ -70,6 +72,7 @@ export function Contact() {
       if (result.status === 200) {
         setSubmitStatus('success');
         setFormData({ name: '', email: '', subject: '', message: '' });
+        setPurpose('');
         // Reset status after 5 seconds
         setTimeout(() => setSubmitStatus('idle'), 5000);
       } else {
@@ -84,7 +87,6 @@ export function Contact() {
           error?.message ||
           'Failed to send message. Please try again or contact me directly via email.'
       );
-      // Reset status after 5 seconds
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } finally {
       setIsLoading(false);
@@ -96,6 +98,38 @@ export function Contact() {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleGenerate = async () => {
+    if (!purpose.trim()) return;
+    try {
+      setIsGenerating(true);
+      const draft = await generateEmailFromPurpose({
+        purpose: purpose.trim(),
+        senderName: formData.name || 'Visitor',
+        senderEmail: formData.email || 'visitor@example.com',
+        tone,
+      });
+
+      // Split possible "Subject:" line and message body
+      const lines = draft.split('\n').map(l => l.trim()).filter(Boolean);
+      let subject = formData.subject;
+      let bodyStart = 0;
+      if (lines[0]?.toLowerCase().startsWith('subject:')) {
+        subject = lines[0].replace(/^[Ss]ubject:\s*/, '').trim();
+        bodyStart = 1;
+      }
+      const body = lines.slice(bodyStart).join('\n');
+
+      setFormData(prev => ({ ...prev, subject, message: body }));
+    } catch (err) {
+      console.error('Gemini generate error:', err);
+      setSubmitStatus('error');
+      setErrorMessage('Could not generate email. Please try again later.');
+      setTimeout(() => setSubmitStatus('idle'), 4000);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const contactInfo = [
@@ -174,10 +208,10 @@ export function Contact() {
             <CardHeader className="pb-6">
               <CardTitle className="text-xl">Send a Message</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 space-y-4">
               {/* Success Message */}
               {submitStatus === 'success' && (
-                <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700">
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 text-green-700">
                   <CheckCircle className="h-5 w-5" />
                   <span>Message sent successfully! I'll get back to you soon.</span>
                 </div>
@@ -185,11 +219,43 @@ export function Contact() {
 
               {/* Error Message */}
               {submitStatus === 'error' && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700">
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700">
                   <AlertCircle className="h-5 w-5" />
                   <span>{errorMessage}</span>
                 </div>
               )}
+
+              {/* AI Assist */}
+              <div className="space-y-2">
+                <label htmlFor="purpose" className="text-sm font-medium">Describe the purpose (AI can draft for you)</label>
+                <Textarea
+                  id="purpose"
+                  name="purpose"
+                  rows={3}
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                  placeholder="E.g., I want to inquire about collaborating on an IoT dashboard project next month..."
+                  disabled={isLoading || isGenerating}
+                />
+                <div className="flex items-center gap-3">
+                  <select
+                    className="bg-input-background border border-input rounded-md px-2 py-1 text-sm"
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value as EmailTone)}
+                    disabled={isLoading || isGenerating}
+                    aria-label="Writing tone"
+                  >
+                    <option value="professional">Professional</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="concise">Concise</option>
+                    <option value="detailed">Detailed</option>
+                  </select>
+                  <Button type="button" variant="outline" size="sm" className="gap-2" onClick={handleGenerate} disabled={isGenerating || !purpose.trim()}>
+                    <Wand2 className="h-4 w-4" />
+                    {isGenerating ? 'Generating...' : 'Generate with AI'}
+                  </Button>
+                </div>
+              </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
