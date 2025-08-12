@@ -22,7 +22,7 @@ export function Projects() {
       image: coldBloxImg,
       technologies: ["IoT", "Hyperledger", "CouchDB", "Supabase", "GSM", "Python"],
       period: "June 2024 - June 2025",
-      organization: "Amrita vishwa vidyapeetham",
+      organization: "Amrita Vishwa Vidyapeetham",
       projectUrl: "https://github.com/yourusername/coldblox-project",
       sourceCodeUrl: "https://github.com/SID63/ColdBlox",
       details: [
@@ -39,7 +39,7 @@ export function Projects() {
       image: busOverloadImg,
       technologies: ["OpenCV", "MobileNet SSD", "MQTT", "HiveMQ", "Gyroscope", "Python"],
       period: "January 2024 - June 2024",
-      organization: "Amrita vishwa vidyapeetham",
+      organization: "Amrita Vishwa Vidyapeetham",
       projectUrl: "https://github.com/yourusername/bus-detection-project",
       sourceCodeUrl: "https://github.com/SID63/ppl-count",
       details: [

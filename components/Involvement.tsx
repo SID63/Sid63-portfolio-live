@@ -38,7 +38,7 @@ export function Involvement() {
       title: "Class Representative",
       organization: "Amrita University",
       period: "February 2022 - June 2024",
-      location: "Amrita University",
+      location: "Amrita University - CCE'25",
       icon: <Target className="h-6 w-6 text-primary" />,
       achievements: [
         "Represented a batch of 78 students, acting as liaison between faculty and students",
