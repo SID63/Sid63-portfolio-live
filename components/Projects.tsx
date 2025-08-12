@@ -72,7 +72,7 @@ export function Projects() {
       description: "Python-based hand gesture recognition app that controls system volume via webcam using MediaPipe and OpenCV.",
       image: gestureVolImg,
       technologies: ["Python", "OpenCV", "MediaPipe", "NumPy", "pycaw", "Windows"],
-      period: "may 2020 – may 2020",
+      period: "May 2020 – May 2020",
       organization: "Passion Project",
       projectUrl: "https://github.com/yourusername/gesture-vol-control",
       sourceCodeUrl: "https://github.com/SID63/gesture-vol-control",

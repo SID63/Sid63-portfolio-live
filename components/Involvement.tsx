@@ -24,7 +24,7 @@ export function Involvement() {
     {
       title: "CO-Head",
       organization: "Amrita University - Anokha'23",
-      period: "July 2023 - August 2024",
+      period: "July 2024 - August 2024",
       location: "Amrita University",
       icon: <Award className="h-6 w-6 text-primary" />,
       achievements: [
